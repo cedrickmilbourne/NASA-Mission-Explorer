@@ -43,6 +43,18 @@ def main():
         else:
             print("\nInvalid choice. Please try again.\n")
 
+def display_mission_details(mission):
+    """Display detailed information for one mission."""
+
+    print("\n" + "=" * 40)
+    print(mission["name"])
+    print("=" * 40)
+    print(f"Launch Year : {mission['launch_year']}")
+    print(f"Destination : {mission['destination']}")
+    print(f"Purpose     : {mission['purpose']}")
+    print("=" * 40)
+    print()    
+
 
 def show_featured_missions():
     """Display featured NASA missions and allow the user to select one."""
@@ -70,19 +82,9 @@ def show_featured_missions():
     if choice not in MISSIONS:
         print("\nMission not found.\n")
         return
-
     mission = MISSIONS[choice]
-
-    print("\n" + "=" * 40)
-    print(mission["name"])
-    print("=" * 40)
-    print(f"Launch Year : {mission['year']}")
-    print(f"Destination : {mission['destination']}")
-    print(f"Purpose     : {mission['purpose']}")
-    print("=" * 40)
-    print()
-    input("Press Enter to return to the main menu...")
-
+    display_mission_details(mission)
+    input("Press Enter to return to the featured missions menu...")
 
 def search_missions():
     """Search the available NASA missions."""
