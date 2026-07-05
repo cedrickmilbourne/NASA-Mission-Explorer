@@ -8,6 +8,8 @@ Explore NASA missions using Python.
 
 from missions import MISSIONS
 from nasa_api import get_apod
+import textwrap
+import webbrowser
 
 def main():
     """Run the NASA Missions Explorer."""
@@ -44,15 +46,35 @@ def main():
             show_statistics()  
 
         elif choice == "6":
-            apod = get_apod()
+
+            date = input(
+                 "\nEnter a date (YYYY-MM-DD) or press Enter for today's picture: "
+    )
+
+            if date == "":
+                apod = get_apod()
+            else:
+                apod = get_apod(date)
+
             print("\nNASA Astronomy Picture of the Day")
-            print("-----------------------------------")
+            print("=" * 40)
             print(f"Title: {apod['title']}")
             print(f"Date: {apod['date']}")
-            print(f"Explanation: {apod['explanation']}")
+            print()
+            print(textwrap.fill(apod["explanation"], width=70))
+            print()
             print(f"Image URL: {apod['url']}")
-            print("-----------------------------------")
-            input("Press Enter to return to the main menu...")
+            print("=" * 40)
+
+            open_image = input(
+                "\nWould you like to open this image in your web browser? (y/n): "
+                ).lower()
+
+            if open_image in ("y", "yes"):
+                webbrowser.open(apod["url"])
+                print("\nOpening image in your browser...")
+
+            input("\nPress Enter to return to the main menu...")
 
         elif choice == "7":
             print("\nThank you for using NASA Missions Explorer.")
