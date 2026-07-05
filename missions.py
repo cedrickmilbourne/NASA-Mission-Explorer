@@ -3,30 +3,40 @@ MISSIONS = {
         "name": "Apollo 11",
         "launch_year": 1969,
         "destination": "Moon",
-        "purpose": "First crewed lunar landing."
+        "purpose": "First crewed lunar landing.",
+        "status": "Completed",
+        "mission_type": "Crewed Lunar Mission"
     },
     2: {
         "name": "Voyager 1",
         "launch_year": 1977,
         "destination": "Interstellar Space",
-        "purpose": "Study the outer planets and beyond."
+        "purpose": "Study the outer planets and beyond.",
+        "status": "Active",
+        "mission_type": "Flyby Probe"
     },
     3: {
         "name": "Curiosity Rover",
         "launch_year": 2011,
         "destination": "Mars",
-        "purpose": "Investigate whether Mars was ever habitable."
+        "purpose": "Investigate whether Mars was ever habitable.",
+        "status": "Active",
+        "mission_type": "Mars Rover"
     },
     4: {
         "name": "Perseverance Rover",
         "launch_year": 2020,
         "destination": "Mars",
-        "purpose": "Search for signs of ancient microbial life."
+        "purpose": "Search for signs of ancient microbial life.",
+        "status": "Active",
+        "mission_type": "Mars Rover"
     },
     5: {
         "name": "James Webb Space Telescope",
         "launch_year": 2021,
         "destination": "Sun-Earth L2",
-        "purpose": "Observe the early universe and distant galaxies."
+        "purpose": "Observe the early universe and distant galaxies.",
+        "status": "Active",
+        "mission_type": "Space Telescope"
     }
 }

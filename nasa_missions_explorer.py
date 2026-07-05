@@ -27,6 +27,7 @@ def main():
 
         if choice == "1":
             show_featured_missions()
+           
         elif choice == "2":
             search_missions()
 
@@ -50,10 +51,12 @@ def display_mission_details(mission):
     print(mission["name"])
     print("=" * 40)
     print(f"Launch Year : {mission['launch_year']}")
+    print(f"Status      : {mission['status']}")
+    print(f"Mission Type: {mission['mission_type']}")
     print(f"Destination : {mission['destination']}")
     print(f"Purpose     : {mission['purpose']}")
     print("=" * 40)
-    print()    
+    print()
 
 
 def show_featured_missions():
@@ -102,8 +105,10 @@ def search_missions():
             search_term in mission["name"].lower()
             or search_term in mission["destination"].lower()
             or search_term in mission["purpose"].lower()
+            or search_term in mission["status"].lower()
+            or search_term in mission["mission_type"].lower()
         ):
-            print(mission["name"])
+            display_mission_details(mission)
             found = True
 
     if not found:
