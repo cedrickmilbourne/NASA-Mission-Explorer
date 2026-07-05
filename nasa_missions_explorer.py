@@ -7,7 +7,7 @@ Explore NASA missions using Python.
 """
 
 from missions import MISSIONS
-from nasa_api import get_apod
+from nasa_api import get_apod, search_nasa_library
 import textwrap
 import webbrowser
 
@@ -20,30 +20,33 @@ def main():
         print("      NASA Missions Explorer")
         print("=" * 40)
         print()
-        print("1. View featured missions")
-        print("2. Search missions")
-        print("3. Filter by destination")
-        print("4. Search by launch year")
-        print("5. View mission statistics")
+        print("1. View Featured Missions")
+        print("2. Search Featured Missions")
+        print("3. Filter Featured Missions by Destination")
+        print("4. Search Featured Missions by Launch Year")
+        print("5. View Featured Missions Statistics")
         print("6. NASA Astronomy Picture of the Day")
-        print("7. Exit")
+        print("7. Search NASA Image Library")
+        print("8. Exit")
 
-        choice = input("Choose an option (1-7): ")
+
+
+        choice = input("Choose an option (1-8): ")
 
         if choice == "1":
             show_featured_missions()
            
         elif choice == "2":
-            search_missions()
+            search_featured_missions()
 
         elif choice == "3":
-            filter_by_destination()
+            filter_featured_missions_by_destination()
 
         elif choice == "4":
-            search_by_launch_year()
+            search_featured_missions_by_launch_year()
 
         elif choice == "5":
-            show_statistics()  
+            show_featured_mission_statistics()
 
         elif choice == "6":
 
@@ -75,8 +78,90 @@ def main():
                 print("\nOpening image in your browser...")
 
             input("\nPress Enter to return to the main menu...")
-
         elif choice == "7":
+            query = input("\nEnter a mission name to search: ")
+
+            results = search_nasa_library(query)
+
+            items = results["collection"]["items"]
+            top_results = items[:5]
+
+            if not items:
+
+                print("\nNo results found.")
+
+                input("\nPress Enter to continue...")
+
+                continue
+
+            print(f"\nTop {min(5, len(items))} Results")
+
+            print("=" * 40)
+
+            for index, item in enumerate(top_results, start=1):
+                
+                data = item["data"][0]
+
+                print(f"{index}. {data.get('title', 'Unknown')}")
+                
+
+            result_choice = input(
+                "\nSelect a result (1-5) or press Enter to return: "
+        )
+
+            if result_choice == "":
+                continue
+
+            if not result_choice.isdigit():
+                print("\nPlease enter a number.")
+                input("\nPress Enter to continue...")
+                continue
+
+            result_choice = int(result_choice)
+
+            if result_choice < 1 or result_choice > len(top_results):
+                print("\nInvalid selection.")
+                input("\nPress Enter to continue...")
+                continue
+
+            selected = top_results[result_choice - 1]
+            data = selected["data"][0]
+
+            print("\nSelected NASA Library Result")
+            print("=" * 40)
+            print(f"Title: {data.get('title', 'Unknown')}")
+            print(f"Date : {data.get('date_created', 'Unknown')[:10]}")
+            print()
+
+            if "description" in data:
+                print(textwrap.fill(data["description"], width=70))
+            else:
+                print("Description unavailable.")
+
+            if "links" in selected and selected["links"]:
+
+                image_url = selected["links"][0]["href"]
+
+                print()
+                print(f"Image URL: {image_url}")
+                print("=" * 40)
+
+                open_image = input(
+                    "\nWould you like to open this image in your web browser? (y/n): "
+                ).lower()
+
+                if open_image in ("y", "yes"):
+
+                    webbrowser.open(image_url)
+
+                    print("\nOpening image in your browser...")
+
+            else: 
+                print("\nNo image available for this result.")
+
+            input("\nPress Enter to continue...")
+
+        elif choice == "8":
             print("\nThank you for using NASA Missions Explorer.")
             break
 
@@ -128,10 +213,10 @@ def show_featured_missions():
     display_mission_details(mission)
     input("Press Enter to return to the featured missions menu...")
 
-def search_missions():
+def search_featured_missions():
     """Search the available NASA missions."""
 
-    search_term = input("\nEnter a mission name: ").lower()
+    search_term = input("\nEnter the name of a featured mission (or keyword): ").lower()
 
     print("\nSearch Results")
     print("--------------")
@@ -158,10 +243,10 @@ def search_missions():
     input("Press Enter to return to the main menu...")
 
 
-def filter_by_destination():
+def filter_featured_missions_by_destination():
     """Filter missions by destination."""
 
-    destination = input("\nEnter a destination: ").lower()
+    destination = input("\nEnter a destination to search featured missions: ").lower()
 
     print("\nMatching Missions")
     print("-----------------")
@@ -170,7 +255,7 @@ def filter_by_destination():
 
     for mission in MISSIONS.values():
         if destination in mission["destination"].lower():
-            print(f"{mission['name']} ({mission['year']})")
+            print(f"{mission['name']} ({mission['launch_year']})")
             found = True
 
     if not found:
@@ -179,10 +264,10 @@ def filter_by_destination():
     print()
     input("Press Enter to return to the main menu...")
 
-def search_by_launch_year():
+def search_featured_missions_by_launch_year():
     """Search missions by launch year."""
 
-    year = input("\nEnter a launch year: ")
+    year = input("\nEnter a launch year for featured missions: ")
 
     if not year.isdigit():
         print("\nPlease enter a valid year.\n")
@@ -206,7 +291,7 @@ def search_by_launch_year():
     print()
     input("Press Enter to return to the main menu...")
 
-def show_statistics():
+def show_featured_mission_statistics():
     """Display basic statistics about the mission catalog."""
 
     total_missions = len(MISSIONS)

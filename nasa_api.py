@@ -16,3 +16,19 @@ def get_apod(date=None):
     response.raise_for_status()
 
     return response.json()
+
+
+def search_nasa_library(query):
+    """Search NASA's Image and Video Library."""
+
+    url = "https://images-api.nasa.gov/search"
+
+    params = {
+        "q": query,
+        "media_type": "image"
+    }
+
+    response = requests.get(url, params=params)
+    response.raise_for_status()
+
+    return response.json()
