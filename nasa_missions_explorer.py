@@ -7,6 +7,7 @@ Explore NASA missions using Python.
 """
 
 from missions import MISSIONS
+from nasa_api import get_apod
 
 def main():
     """Run the NASA Missions Explorer."""
@@ -21,9 +22,11 @@ def main():
         print("2. Search missions")
         print("3. Filter by destination")
         print("4. Search by launch year")
-        print("5. Exit")
+        print("5. View mission statistics")
+        print("6. NASA Astronomy Picture of the Day")
+        print("7. Exit")
 
-        choice = input("Choose an option (1-5): ")
+        choice = input("Choose an option (1-7): ")
 
         if choice == "1":
             show_featured_missions()
@@ -38,6 +41,20 @@ def main():
             search_by_launch_year()
 
         elif choice == "5":
+            show_statistics()  
+
+        elif choice == "6":
+            apod = get_apod()
+            print("\nNASA Astronomy Picture of the Day")
+            print("-----------------------------------")
+            print(f"Title: {apod['title']}")
+            print(f"Date: {apod['date']}")
+            print(f"Explanation: {apod['explanation']}")
+            print(f"Image URL: {apod['url']}")
+            print("-----------------------------------")
+            input("Press Enter to return to the main menu...")
+
+        elif choice == "7":
             print("\nThank you for using NASA Missions Explorer.")
             break
 
@@ -166,6 +183,46 @@ def search_by_launch_year():
 
     print()
     input("Press Enter to return to the main menu...")
+
+def show_statistics():
+    """Display basic statistics about the mission catalog."""
+
+    total_missions = len(MISSIONS)
+
+    active_count = 0
+    completed_count = 0
+
+    destinations = {}
+
+    for mission in MISSIONS.values():
+        if mission["status"] == "Active":
+            active_count += 1
+        elif mission["status"] == "Completed":
+            completed_count += 1
+
+        destination = mission["destination"]
+
+        if destination in destinations:
+            destinations[destination] += 1
+        else:
+            destinations[destination] = 1
+
+    print("\nMission Statistics")
+    print("------------------")
+    print(f"Total missions   : {total_missions}")
+    print(f"Active missions  : {active_count}")
+    print(f"Completed missions: {completed_count}")
+    print()
+
+    print("Missions by Destination")
+    print("-----------------------")
+
+    for destination, count in destinations.items():
+        print(f"{destination}: {count}")
+
+    print()
+    input("Press Enter to return to the main menu...")
+
 
 if __name__ == "__main__":
     main()
