@@ -200,7 +200,7 @@ def show_featured_missions():
 
     print()
 
-    choice = input("Select a mission (1-5) or press Enter to return: ")
+    choice = input("Select a mission (1-28) or press Enter to return: ")
 
     if choice == "":
         return
@@ -236,6 +236,11 @@ def search_featured_missions():
             or search_term in mission["purpose"].lower()
             or search_term in mission["status"].lower()
             or search_term in mission["mission_type"].lower()
+            or search_term in mission["program"].lower()
+            or search_term in mission["agency"].lower()
+            or search_term in mission["spacecraft"].lower()
+            or search_term in mission["launch_vehicle"].lower()
+            or search_term in mission["launch_site"].lower()
         ):
             display_mission_details(mission)
             found = True
