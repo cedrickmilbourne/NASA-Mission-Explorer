@@ -59,6 +59,15 @@ def main():
             else:
                 apod = get_apod(date)
 
+            if apod is None:
+                print("\nUnable to retrieve NASA Astronomy Picture of the Day.")
+                print("Possible reasons:")
+                print(" - The date is before June 16, 1995.")
+                print(" - The date is invalid.")
+                print(" - The NASA API is temporarily unavailable.")
+                input("\nPress Enter to return to the main menu...")
+                continue
+
             print("\nNASA Astronomy Picture of the Day")
             print("=" * 40)
             print(f"Title: {apod['title']}")
@@ -79,12 +88,24 @@ def main():
 
             input("\nPress Enter to return to the main menu...")
         elif choice == "7":
-            query = input("\nEnter a mission name to search: ")
-
+            query = input("\nEnter a NASA mission or topic to search: ")
             results = search_nasa_library(query)
 
             items = results["collection"]["items"]
-            top_results = items[:5]
+            top_results = []
+            seen_titles = set()
+
+
+            for item in items:
+                data = item["data"][0]
+                title = data.get("title", "Unknown").strip()
+
+                if title.lower() not in seen_titles:
+                    top_results.append(item)
+                    seen_titles.add(title.lower())
+
+                if len(top_results) == 10:
+                    break
 
             if not items:
 
@@ -94,7 +115,7 @@ def main():
 
                 continue
 
-            print(f"\nTop {min(5, len(items))} Results")
+            print(f"\nTop {min(10, len(items))} Results")
 
             print("=" * 40)
 
@@ -106,7 +127,7 @@ def main():
                 
 
             result_choice = input(
-                "\nSelect a result (1-5) or press Enter to return: "
+                "\nSelect a result (1-10) or press Enter to return: "
         )
 
             if result_choice == "":
@@ -219,17 +240,15 @@ def show_featured_missions():
     input("Press Enter to return to the featured missions menu...")
 
 def search_featured_missions():
-    """Search the available NASA missions."""
+    """Search featured NASA missions using a mission name or keyword."""
 
-    search_term = input("\nEnter the name of a featured mission (or keyword): ").lower()
+    search_term = input(
+        "\nEnter the name of a featured mission (or keyword): "
+    ).lower()
 
-    print("\nSearch Results")
-    print("--------------")
-
-    found = False
+    matches = []
 
     for mission in MISSIONS.values():
-
         if (
             search_term in mission["name"].lower()
             or search_term in mission["destination"].lower()
@@ -242,64 +261,107 @@ def search_featured_missions():
             or search_term in mission["launch_vehicle"].lower()
             or search_term in mission["launch_site"].lower()
         ):
-            display_mission_details(mission)
-            found = True
+            matches.append(mission)
 
-    if not found:
-        print("No matching missions found.")
+    if not matches:
+        print("\nNo matching missions found.")
+        input("\nPress Enter to return to the main menu...")
+        return
 
-    print()
+    print("\nSearch Results")
+    print("--------------")
 
-    input("Press Enter to return to the main menu...")
+    choose_mission_from_results(matches)
 
+    
 
 def filter_featured_missions_by_destination():
-    """Filter missions by destination."""
+    """Filter featured missions by destination."""
 
-    destination = input("\nEnter a destination to search featured missions: ").lower()
+    destination = input(
+        "\nEnter a destination to search featured missions: "
+    ).lower()
+
+    matches = []
+
+    for mission in MISSIONS.values():
+        if destination in mission["destination"].lower():
+            matches.append(mission)
+
+    if not matches:
+        print("\nNo missions found for that destination.")
+        input("\nPress Enter to return to the main menu...")
+        return
 
     print("\nMatching Missions")
     print("-----------------")
 
-    found = False
-
-    for mission in MISSIONS.values():
-        if destination in mission["destination"].lower():
-            print(f"{mission['name']} ({mission['launch_year']})")
-            found = True
-
-    if not found:
-        print("No missions found for that destination.")
-
-    print()
-    input("Press Enter to return to the main menu...")
+    choose_mission_from_results(matches)
 
 def search_featured_missions_by_launch_year():
-    """Search missions by launch year."""
+    """Search featured missions by launch year."""
 
-    year = input("\nEnter a launch year for featured missions: ")
+    year = input("\nEnter a launch year: ")
 
     if not year.isdigit():
-        print("\nPlease enter a valid year.\n")
+        print("\nPlease enter a valid four-digit year.")
+        input("\nPress Enter to return to the main menu...")
         return
 
-    year = int(year)
+    launch_year = int(year)
 
-    print("\nMissions Launched in", year)
-    print("---------------------------")
+    matches = [
+        mission
+        for mission in MISSIONS.values()
+        if mission["launch_year"] == launch_year
+    ]
 
-    found = False
+    if not matches:
+        print("\nNo featured missions found for that launch year.")
+        input("\nPress Enter to return to the main menu...")
+        return
 
-    for mission in MISSIONS.values():
-        if mission["launch_year"] == year:
-            print(f"{mission['name']} ({mission['destination']})")
-            found = True
+    print("\nMatching Missions")
+    print("-----------------")
 
-    if not found:
-        print("No missions found for that launch year.")
+    choose_mission_from_results(matches)
+
+
+def choose_mission_from_results(matches):
+    """Allow the user to select and view one mission from a result list."""
+
+    if not matches:
+        return
 
     print()
-    input("Press Enter to return to the main menu...")
+
+    for index, mission in enumerate(matches, start=1):
+        print(f"{index}. {mission['name']} ({mission['launch_year']})")
+
+    choice = input(
+        f"\nSelect a mission (1-{len(matches)}) "
+        "or press Enter to return: "
+    )
+
+    if choice == "":
+        return
+
+    if not choice.isdigit():
+        print("\nPlease enter a number.")
+        input("\nPress Enter to continue...")
+        return
+
+    choice = int(choice)
+
+    if choice < 1 or choice > len(matches):
+        print("\nInvalid selection.")
+        input("\nPress Enter to continue...")
+        return
+
+    selected_mission = matches[choice - 1]
+    display_mission_details(selected_mission)
+
+    input("\nPress Enter to return to the main menu...")
 
 def show_featured_mission_statistics():
     """Display basic statistics about the mission catalog."""
