@@ -112,6 +112,22 @@ python main.py
 I developed NASA Missions Explorer while completing my Bachelor of Science in Physics to strengthen my software development skills and build a technical portfolio. This project combines my interest in space exploration with practical experience in Python programming, API integration, modular software design, and command-line application development.
 
 ---
+## Preview
+
+### View mission details
+
+![Apollo 11 mission details](images/apollo11_details.png)
+
+Browse a curated database of historic space missions and view detailed information including launch year, spacecraft, launch vehicle, destination, and mission purpose.
+
+---
+
+### Search NASA's media library
+
+![NASA media search](images/apollo11_media_search.png)
+
+Search NASA's Images and Video Library directly from the application and browse mission-related media without leaving the program.
+
 
 ## Author
 
